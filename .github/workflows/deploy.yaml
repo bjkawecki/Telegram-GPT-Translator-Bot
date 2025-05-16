@@ -1,4 +1,4 @@
-name: Deploy Telegram Bot (Lambda + Infra)
+name: Deploy Telegram Bot (Infra + Lambda Code)
 
 on:
   push:
@@ -10,58 +10,48 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      AWS_REGION: eu-central-1 # Deine AWS Region
-      S3_BUCKET: mirrowchan_bot # Dein S3 Bucket Name
-      LAMBDA_ZIP_KEY: telegram_bot/lambda.zip # Ziel-Pfad im S3
-      TERRAFORM_DIR: terraform # Verzeichnis für Terraform Code
+      AWS_REGION: eu-central-1
+      S3_BUCKET: mirrowchanbot-bucket-bucket
+      LAMBDA_ZIP_KEY: telegram_bot/lambda.zip
+      TERRAFORM_DIR: infra
 
     steps:
-      # 1. Code aus Repo holen
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Python Umgebung für Lambda Dependencies
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
-
-      # 3. Build Lambda ZIP (mit Dependencies)
-      - name: Build Lambda ZIP package
-        run: |
-          pip install -r lambda/requirements.txt --target lambda/package/
-          cd lambda/package && zip -r9 ../../lambda.zip .
-          cd ../ && zip -g lambda.zip bot_handler.py
-
-      # 4. AWS Credentials setzen (entweder OIDC oder Secrets)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: ${{ env.AWS_REGION }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        # Optional: mit OIDC Role-Assumption sicherer (empfohlen!)
 
-      # 5. Upload Lambda ZIP nach S3
-      - name: Upload Lambda ZIP to S3
-        run: |
-          aws s3 cp lambda.zip s3://${{ env.S3_BUCKET }}/${{ env.LAMBDA_ZIP_KEY }}
-
-      # 6. Terraform installieren
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      # 7. Terraform Init
       - name: Terraform Init
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: terraform init
 
-      # 8. Terraform Plan
-      - name: Terraform Plan
+      - name: Terraform Apply (Infrastructure & SSM Setup)
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform plan
+        run: terraform apply -auto-approve
 
-      # 9. Terraform Apply → updated Lambda, falls ZIP geändert wurde
-      - name: Terraform Apply
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Build Lambda ZIP package
+        run: |
+          pip install -r lambda/requirements.txt --target lambda/package/
+          cd lambda/package && zip -r9 ../../lambda.zip .
+          cd ../ && zip -g lambda.zip bot_handler.py
+
+      - name: Upload Lambda ZIP to S3
+        run: |
+          aws s3 cp lambda.zip s3://${{ env.S3_BUCKET }}/${{ env.LAMBDA_ZIP_KEY }}
+
+      - name: Terraform Apply (Lambda Code Update)
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: terraform apply -auto-approve

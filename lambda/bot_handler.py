@@ -11,6 +11,14 @@ def get_webhook_token():
     return response["Parameter"]["Value"]
 
 
+def get_api_gateway_url():
+    ssm = boto3.client("ssm")
+    response = ssm.get_parameter(
+        Name="/mirrowchan_bot/api_gateway_url", WithDecryption=False
+    )
+    return response["Parameter"]["Value"]
+
+
 def handler(event, context):
     # 1. Bot-Token zur Verifikation
     expected_token = get_webhook_token()
@@ -24,6 +32,9 @@ def handler(event, context):
     # 3. Telegram Webhook Payload
     body = json.loads(event.get("body", "{}"))
     print(f"Received Telegram update: {body}")
+
+    api_url = get_api_gateway_url()
+    print(f"Webhook URL: {api_url}")
 
     # 4. Hier geht's dann mit deiner Logik weiter
     # z.B. OpenAI API Aufruf & Antwort in Spiegel-Kanal posten

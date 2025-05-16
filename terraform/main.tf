@@ -71,27 +71,27 @@ resource "aws_lambda_function" "telegram_bot" {
 }
 
 #* API Gateway
-resource "aws_apigatewayv2_api" "telegram_api" {
+resource "aws_apigatewayv2_api" "webhook_api" {
   name          = "telegram-bot-api"
   protocol_type = "HTTP"
 }
 
 resource "aws_apigatewayv2_integration" "lambda_integration" {
-  api_id             = aws_apigatewayv2_api.telegram_api.id
+  api_id             = aws_apigatewayv2_api.webhook_api.id
   integration_type   = "AWS_PROXY"
   integration_uri    = aws_lambda_function.telegram_bot.invoke_arn
   integration_method = "POST"
 }
 
 resource "aws_apigatewayv2_route" "webhook_route" {
-  api_id    = aws_apigatewayv2_api.telegram_api.id
+  api_id    = aws_apigatewayv2_api.webhook_api.id
   route_key = "POST /webhook/{token}"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
 
 resource "aws_apigatewayv2_stage" "default" {
-  api_id      = aws_apigatewayv2_api.telegram_api.id
+  api_id      = aws_apigatewayv2_api.webhook_api.id
   name        = "$default"
   auto_deploy = true
 }
@@ -108,4 +108,10 @@ resource "aws_ssm_parameter" "openai_api_key" {
   name  = "/${var.bot_name}/openai_api_key"
   type  = "SecureString"
   value = var.openai_api_key
+}
+
+resource "aws_ssm_parameter" "api_gateway_url" {
+  name  = "/${var.bot_name}/api_gateway_url"
+  type  = "String"
+  value = aws_apigatewayv2_api.webhook_api.api_endpoint
 }
