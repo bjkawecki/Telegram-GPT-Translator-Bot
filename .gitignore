@@ -1,0 +1,6 @@
+venv
+.env
+.terraform
+.terraform.lock.hcl
+variables.tf
+terraform.tfvars
