@@ -96,8 +96,6 @@ resource "aws_apigatewayv2_stage" "default" {
   auto_deploy = true
 }
 
-
-#* Systems Manager Parameter Store
 resource "aws_ssm_parameter" "telegram_bot_token" {
   name  = "/${var.bot_name}/telegram_bot_token"
   type  = "SecureString"
