@@ -102,4 +102,4 @@ jobs:
           TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
           TF_VAR_code_bucket_name: ${{ secrets.CODE_BUCKET_NAME }}
           TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-        run: terraform apply -auto-approve -target=aws_lambda_function.telegram_bot_lambda
+        run: terraform apply -auto-approve -target=aws_lambda_function.telegram_bot
