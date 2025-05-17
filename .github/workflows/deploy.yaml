@@ -55,7 +55,7 @@ jobs:
         run: terraform output
 
       - name: Debug Terraform Output Raw
-        run: terraform output -raw api_gateway_url
+        run: terraform output
 
       - name: Get API Gateway URL Output
         id: tf-output
