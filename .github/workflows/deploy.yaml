@@ -50,10 +50,20 @@ jobs:
           TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
         run: terraform apply -auto-approve -target=aws_s3_bucket.lambda_code_bucket -target=aws_ssm_parameter.bot_token -target=aws_apigatewayv2_api.webhook_api
 
+      - name: Show all Terraform outputs (debug)
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform output
+
       - name: Get API Gateway URL Output
         id: tf-output
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: echo "url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
+        run: |
+          url=$(terraform output -raw api_gateway_url || echo "")
+          if [ -z "$url" ]; then
+            echo "API Gateway URL output is empty or missing."
+            exit 1
+          fi
+          echo "url=$url" >> $GITHUB_OUTPUT
 
       - name: Write API Gateway URL to SSM Parameter Store
         run: |
