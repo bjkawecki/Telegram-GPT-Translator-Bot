@@ -14,7 +14,6 @@ jobs:
       S3_BUCKET: mirrowchanbot-bucket-bucket
       LAMBDA_ZIP_KEY: telegram_bot/lambda.zip
       TERRAFORM_DIR: terraform
-      ACTIONS_STEP_DEBUG: true
 
     steps:
       - name: Checkout Repository
@@ -58,8 +57,8 @@ jobs:
         id: tf-output
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: |
-          url=$(terraform output -raw api_gateway_url)
-          echo "url=$url"
+            url=$(terraform output -raw api_gateway_url)
+            echo "url=$url"
           echo "url=$url" >> $GITHUB_OUTPUT
 
       - name: Write API Gateway URL to SSM Parameter Store
