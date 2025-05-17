@@ -55,18 +55,18 @@ resource "aws_iam_policy" "lambda_policy" {
   })
 }
 
-# * Lambda IAM Policy Attachment
+#* Lambda IAM Policy Attachment
 resource "aws_iam_role_policy_attachment" "lambda_policy_attach" {
   role       = aws_iam_role.lambda_exec_role.name
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 
-# * Lambda Function
+#* Lambda Function
 resource "aws_lambda_function" "telegram_bot" {
   function_name = "telegram-bot-handler"
   s3_bucket     = aws_s3_bucket.lambda_code_bucket.id
-  s3_key        = "code.zip"    # via CI/CD hochgeladen
-  handler       = "bot.handler" # Beispiel: bot.py mit def handler(event, context)
+  s3_key        = "telegram_bot/lambda.zip" # via CI/CD hochgeladen
+  handler       = "bot.handler"             # Beispiel: bot.py mit def handler(event, context)
   runtime       = "python3.11"
   role          = aws_iam_role.lambda_exec_role.arn
 }
