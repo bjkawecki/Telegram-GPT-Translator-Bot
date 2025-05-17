@@ -40,7 +40,7 @@ jobs:
           pip install -r lambda/requirements.txt --target lambda/package
           cd lambda
           zip -r9 ../lambda.zip package/
-          zip -g ../lambda.zip lambda/bot_handler.py
+          zip -g ../lambda.zip bot_handler.py
 
       - name: Upload to S3
         run: |
