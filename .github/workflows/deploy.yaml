@@ -15,7 +15,7 @@ jobs:
     env:
       AWS_REGION: eu-central-1
       S3_BUCKET: mirrowchanbot-code-bucket
-      LAMBDA_FUNCTION_NAME: telegram_bot_handler
+      LAMBDA_FUNCTION_NAME: mirrowchanbot-handler
       LAMBDA_ZIP_KEY: mirrowchanbot/code.zip
 
     steps:
