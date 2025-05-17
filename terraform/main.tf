@@ -96,10 +96,10 @@ resource "aws_apigatewayv2_stage" "default" {
   auto_deploy = true
 }
 
-resource "aws_ssm_parameter" "telegram_bot_token" {
-  name  = "/${var.bot_name}/telegram_bot_token"
+resource "aws_ssm_parameter" "bot_token" {
+  name  = "/${var.bot_name}/bot_token"
   type  = "SecureString"
-  value = var.telegram_bot_token
+  value = var.bot_token
 }
 
 resource "aws_ssm_parameter" "openai_api_key" {

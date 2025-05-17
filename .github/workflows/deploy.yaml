@@ -36,7 +36,7 @@ jobs:
 
       - name: Terraform Apply (Only S3, SSM Bot Token, API Gateway)
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform apply -auto-approve -target=aws_s3_bucket.your_bucket_name -target=aws_ssm_parameter.bot_token -target=aws_apigatewayv2_api.your_api_gateway
+        run: terraform apply -auto-approve -target=aws_s3_bucket.lambda_code_bucket -target=aws_ssm_parameter.bot_token -target=aws_apigatewayv2_api.webhook_api
 
       - name: Get API Gateway URL Output
         id: tf-output
@@ -45,7 +45,7 @@ jobs:
 
       - name: Write API Gateway URL to SSM Parameter Store
         run: |
-          aws ssm put-parameter --name "/your/path/api_gateway_url" --value "${{ steps.tf-output.outputs.url }}" --type String --overwrite
+          aws ssm put-parameter --name aws_ssm_parameter.api_gateway_url.name --value "${{ steps.tf-output.outputs.url }}" --type String --overwrite
 
       - name: Setup Python
         uses: actions/setup-python@v4

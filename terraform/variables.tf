@@ -9,7 +9,7 @@ variable "code_bucket_name" {
   sensitive = true
 }
 
-variable "telegram_bot_token" {
+variable "bot_token" {
   description = "Geheimer Token für Telegram Webhook URL"
   type        = string
   sensitive   = true
