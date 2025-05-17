@@ -36,6 +36,10 @@ jobs:
 
       - name: Terraform Import S3 Bucket
         working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
+          TF_VAR_code_bucket_name: ${{ secrets.CODE_BUCKET_NAME }}
+          TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
         run: terraform import aws_s3_bucket.lambda_code_bucket mirrowchanbot-bucket-bucket || true
 
       - name: Terraform Apply (Only S3, SSM Bot Token, API Gateway)
@@ -72,4 +76,8 @@ jobs:
 
       - name: Terraform Apply (Lambda Code Deploy)
         working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
+          TF_VAR_code_bucket_name: ${{ secrets.CODE_BUCKET_NAME }}
+          TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
         run: terraform apply -auto-approve -target=aws_lambda_function.telegram_bot_lambda
