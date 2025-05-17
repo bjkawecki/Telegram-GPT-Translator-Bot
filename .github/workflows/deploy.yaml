@@ -6,6 +6,7 @@ on:
       - "lambda/**"
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
