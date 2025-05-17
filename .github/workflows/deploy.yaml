@@ -14,6 +14,7 @@ jobs:
       S3_BUCKET: mirrowchanbot-bucket-bucket
       LAMBDA_ZIP_KEY: telegram_bot/lambda.zip
       TERRAFORM_DIR: terraform
+      ACTIONS_STEP_DEBUG: true
 
     steps:
       - name: Checkout Repository
