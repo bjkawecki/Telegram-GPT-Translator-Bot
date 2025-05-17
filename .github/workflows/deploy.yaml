@@ -36,6 +36,8 @@ jobs:
 
       - name: Terraform Apply (Only S3, SSM Bot Token, API Gateway)
         working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
         run: terraform apply -auto-approve -target=aws_s3_bucket.lambda_code_bucket -target=aws_ssm_parameter.bot_token -target=aws_apigatewayv2_api.webhook_api
 
       - name: Get API Gateway URL Output
