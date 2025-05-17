@@ -1,7 +1,9 @@
-name: Deploy Telegram Bot (Infra + Lambda Code)
+name: Deploy Lambda to S3 and Update Function
 
 on:
   push:
+    paths:
+      - "lambda/**"
     branches:
       - main
 
@@ -11,95 +13,37 @@ jobs:
 
     env:
       AWS_REGION: eu-central-1
-      S3_BUCKET: mirrowchanbot-bucket-bucket
-      LAMBDA_ZIP_KEY: telegram_bot/lambda.zip
-      TERRAFORM_DIR: terraform
-      ACTIONS_STEP_DEBUG: false
+      S3_BUCKET: mirrowchanbot-code-bucket
+      LAMBDA_FUNCTION_NAME: telegram_bot_handler
+      LAMBDA_ZIP_KEY: mirrowchanbot/code.zip
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-region: ${{ env.AWS_REGION }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_wrapper: false
-
-      - name: Terraform Init
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform init
-
-      - name: Terraform Import S3 Bucket
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        env:
-          TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
-          TF_VAR_code_bucket_name: ${{ secrets.CODE_BUCKET_NAME }}
-          TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-        run: terraform import aws_s3_bucket.lambda_code_bucket mirrowchanbot-bucket-bucket || true
-
-      - name: Terraform Apply (Only S3, SSM Bot Token, API Gateway)
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        env:
-          TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
-          TF_VAR_code_bucket_name: ${{ secrets.CODE_BUCKET_NAME }}
-          TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-        run: terraform apply -auto-approve -target=aws_s3_bucket.lambda_code_bucket -target=aws_ssm_parameter.bot_token -target=aws_apigatewayv2_api.webhook_api
-
-      - name: Show all Terraform outputs (debug)
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        run: |
-          terraform output
-          terraform output -raw api_gateway_url
-          echo "url=$url" >> $GITHUB_OUTPUT
-
-      - name: Get API Gateway URL Output
-        id: tf-output
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        run: |
-          url=$(terraform output -raw api_gateway_url)
-          echo "url=$url"
-          echo "url=$url" >> $GITHUB_OUTPUT
-
-      - name: Write API Gateway URL to SSM Parameter Store
-        run: |
-          url="${{ steps.tf-output.outputs.url }}"
-          if [ -z "$url" ]; then
-            echo "ERROR: Kein URL-Wert aus Terraform Output erhalten."
-            exit 1
-          fi
-
-          aws ssm put-parameter \
-            --name "/mirrowchan_bot/api_gateway_url" \
-            --value "$url" \
-            --type String \
-            --overwrite
-
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: 3.11
 
-      - name: Build Lambda ZIP package
+      - name: Install dependencies
         run: |
-          pip install -r lambda/requirements.txt --target lambda/package/
-          cd lambda/package && zip -r9 ../../lambda.zip .
-          cd ../ && zip -g lambda.zip bot_handler.py
+          pip install -r lambda/requirements.txt --target lambda/package
+          cd lambda/package
+          zip -r9 ../../lambda.zip .
+          cd ..
+          zip -g lambda.zip bot_handler.py  # oder dein Einstiegspunkt
 
-      - name: Upload Lambda ZIP to S3
+      - name: Upload to S3
         run: |
-          aws s3 cp lambda.zip s3://${{ secrets.CODE_BUCKET_NAME }}/${{ env.LAMBDA_ZIP_KEY }}
+          aws s3 cp lambda.zip s3://$S3_BUCKET/$LAMBDA_ZIP_KEY
 
-      - name: Terraform Apply (Lambda Code Deploy)
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        env:
-          TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
-          TF_VAR_code_bucket_name: ${{ secrets.CODE_BUCKET_NAME }}
-          TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-        run: terraform apply -auto-approve -target=aws_lambda_function.telegram_bot
+      - name: Update Lambda function code
+        run: |
+          aws lambda update-function-code \
+            --function-name $LAMBDA_FUNCTION_NAME \
+            --s3-bucket $S3_BUCKET \
+            --s3-key $LAMBDA_ZIP_KEY
+
+      - name: Optional Clean up
+        run: rm lambda.zip

@@ -62,13 +62,14 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attach" {
 }
 
 #* Lambda Function
-resource "aws_lambda_function" "telegram_bot" {
-  function_name = "telegram-bot-handler"
-  s3_bucket     = aws_s3_bucket.lambda_code_bucket.id
-  s3_key        = "telegram_bot/lambda.zip" # via CI/CD hochgeladen
-  handler       = "bot.handler"             # Beispiel: bot.py mit def handler(event, context)
-  runtime       = "python3.11"
-  role          = aws_iam_role.lambda_exec_role.arn
+resource "aws_lambda_function" "telegram_bot_handler" {
+  function_name    = "mirrowchanbot-handler"
+  filename         = "../lambda/initial_lambda.zip"                   # Lokale ZIP-Datei
+  source_code_hash = filebase64sha256("../lambda/initial_lambda.zip") # wichtig für Updates
+  handler          = "bot.handler"
+  runtime          = "python3.11"
+  role             = aws_iam_role.lambda_exec_role.arn
+  depends_on       = [aws_iam_role_policy_attachment.lambda_policy_attach]
 }
 
 #* API Gateway
@@ -80,7 +81,7 @@ resource "aws_apigatewayv2_api" "webhook_api" {
 resource "aws_apigatewayv2_integration" "lambda_integration" {
   api_id             = aws_apigatewayv2_api.webhook_api.id
   integration_type   = "AWS_PROXY"
-  integration_uri    = aws_lambda_function.telegram_bot.invoke_arn
+  integration_uri    = aws_lambda_function.telegram_bot_handler.invoke_arn
   integration_method = "POST"
 }
 
