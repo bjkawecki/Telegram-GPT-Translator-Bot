@@ -52,7 +52,11 @@ jobs:
 
       - name: Show all Terraform outputs (debug)
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform output
+        run: |
+          terraform output
+          terraform output -raw api_gateway_url
+          url=$(terraform output -raw api_gateway_url)
+          echo "url=$url" >> $GITHUB_OUTPUT
 
       - name: Get API Gateway URL Output
         id: tf-output
