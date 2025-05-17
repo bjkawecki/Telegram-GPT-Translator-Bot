@@ -56,8 +56,14 @@ jobs:
 
       - name: Get API Gateway URL Output
         id: tf-output
+        working-directory: ${{ env.TERRAFORM_DIR }}
         run: |
-          echo "url=${terraform output}" >> $GITHUB_OUTPUT
+          url=$(terraform output -raw api_gateway_url || echo "")
+          if [ -z "$url" ]; then
+            echo "ERROR: Terraform Output leer oder fehlt."
+            exit 1
+          fi
+          echo "url=$url" >> $GITHUB_OUTPUT
 
       - name: Write API Gateway URL to SSM Parameter Store
         run: |
