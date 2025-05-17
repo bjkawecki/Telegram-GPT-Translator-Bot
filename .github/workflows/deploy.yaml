@@ -39,6 +39,7 @@ jobs:
         env:
           TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
           TF_VAR_code_bucket_name: ${{ secrets.CODE_BUCKET_NAME }}
+          TF_VAR_openai_api_key: ${{ secrets.OPENAI_API_KEY }}
 
         run: terraform apply -auto-approve -target=aws_s3_bucket.lambda_code_bucket -target=aws_ssm_parameter.bot_token -target=aws_apigatewayv2_api.webhook_api
 

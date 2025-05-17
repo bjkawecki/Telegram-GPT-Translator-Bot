@@ -20,7 +20,6 @@ variable "openai_api_key" {
   sensitive = true
 }
 
-
 variable "bot_name" {
   type    = string
   default = "mirrowchan_bot"
