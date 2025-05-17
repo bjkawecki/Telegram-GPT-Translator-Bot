@@ -54,9 +54,24 @@ jobs:
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: terraform output
 
+      - name: Get API Gateway URL Output
+        id: tf-output
+        run: |
+          echo "url=${terraform output}" >> $GITHUB_OUTPUT
+
       - name: Write API Gateway URL to SSM Parameter Store
         run: |
-          aws ssm put-parameter --name "/mirrowchan_bot/api_gateway_url" --value "${{ steps.tf-output.outputs.url }}" --type String --overwrite
+          url="${{ steps.tf-output.outputs.url }}"
+          if [ -z "$url" ]; then
+            echo "ERROR: Kein URL-Wert aus Terraform Output erhalten."
+            exit 1
+          fi
+
+          aws ssm put-parameter \
+            --name "/mirrowchan_bot/api_gateway_url" \
+            --value "$url" \
+            --type String \
+            --overwrite
 
       - name: Setup Python
         uses: actions/setup-python@v4
