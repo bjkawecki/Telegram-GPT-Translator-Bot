@@ -54,11 +54,14 @@ jobs:
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: terraform output
 
+      - name: Debug Terraform Output Raw
+        run: terraform output -raw api_gateway_url
+
       - name: Get API Gateway URL Output
         id: tf-output
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: |
-          url=$(terraform output -raw api_gateway_url || echo "")
+          url=$(terraform output -raw api_gateway_url)
           if [ -z "$url" ]; then
             echo "ERROR: Terraform Output leer oder fehlt."
             exit 1
