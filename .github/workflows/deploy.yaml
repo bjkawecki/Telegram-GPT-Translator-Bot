@@ -34,9 +34,18 @@ jobs:
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: terraform init
 
-      - name: Terraform Apply (Infrastructure & SSM Setup)
+      - name: Terraform Apply (Only S3, SSM Bot Token, API Gateway)
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -target=aws_s3_bucket.your_bucket_name -target=aws_ssm_parameter.bot_token -target=aws_apigatewayv2_api.your_api_gateway
+
+      - name: Get API Gateway URL Output
+        id: tf-output
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: echo "url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
+
+      - name: Write API Gateway URL to SSM Parameter Store
+        run: |
+          aws ssm put-parameter --name "/your/path/api_gateway_url" --value "${{ steps.tf-output.outputs.url }}" --type String --overwrite
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -53,6 +62,6 @@ jobs:
         run: |
           aws s3 cp lambda.zip s3://${{ env.S3_BUCKET }}/${{ env.LAMBDA_ZIP_KEY }}
 
-      - name: Terraform Apply (Lambda Code Update)
+      - name: Terraform Apply (Lambda Code Deploy)
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -target=aws_lambda_function.telegram_bot_lambda
