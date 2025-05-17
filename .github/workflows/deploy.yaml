@@ -58,8 +58,7 @@ jobs:
         id: tf-output
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: |
-          url=$(terraform output)
-          printf "url=%s\n" "$url" >> $GITHUB_OUTPUT
+          echo "url=$(terraform output)" >> $GITHUB_OUTPUT
 
       - name: Write API Gateway URL to SSM Parameter Store
         run: |
