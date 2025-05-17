@@ -94,7 +94,7 @@ jobs:
 
       - name: Upload Lambda ZIP to S3
         run: |
-          aws s3 cp lambda.zip s3://${{ env.S3_BUCKET }}/${{ env.LAMBDA_ZIP_KEY }}
+          aws s3 cp lambda.zip s3://${{ secrets.CODE_BUCKET_NAME }}/${{ env.LAMBDA_ZIP_KEY }}
 
       - name: Terraform Apply (Lambda Code Deploy)
         working-directory: ${{ env.TERRAFORM_DIR }}
