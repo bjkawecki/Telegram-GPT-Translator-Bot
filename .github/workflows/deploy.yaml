@@ -34,6 +34,10 @@ jobs:
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: terraform init
 
+      - name: Terraform Import S3 Bucket
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform import aws_s3_bucket.lambda_code_bucket mirrowchanbot-bucket-bucket || true
+
       - name: Terraform Apply (Only S3, SSM Bot Token, API Gateway)
         working-directory: ${{ env.TERRAFORM_DIR }}
         env:

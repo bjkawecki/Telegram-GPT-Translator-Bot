@@ -97,9 +97,10 @@ resource "aws_apigatewayv2_stage" "default" {
 }
 
 resource "aws_ssm_parameter" "bot_token" {
-  name  = "/${var.bot_name}/bot_token"
-  type  = "SecureString"
-  value = var.bot_token
+  name      = "/${var.bot_name}/bot_token"
+  type      = "SecureString"
+  value     = var.bot_token
+  overwrite = true
 }
 
 resource "aws_ssm_parameter" "openai_api_key" {
