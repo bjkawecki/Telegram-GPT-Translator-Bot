@@ -1,6 +1,7 @@
 #* S3 Bucket für Lambda-Code
 resource "aws_s3_bucket" "lambda_code_bucket" {
-  bucket = var.code_bucket_name
+  bucket        = var.code_bucket_name
+  force_destroy = true
 }
 
 # * Lambda IAM Role
