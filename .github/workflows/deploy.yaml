@@ -2,8 +2,8 @@ name: Deploy Lambda to S3 and Update Function
 
 on:
   push:
-    paths:
-      - "lambda/**"
+    # paths:
+    #   - "lambda/**"
     branches:
       - main
   workflow_dispatch:
@@ -36,11 +36,13 @@ jobs:
 
       - name: Install dependencies
         run: |
+          mkdir -p lambda/package
           pip install -r lambda/requirements.txt --target lambda/package
           cd lambda/package
-          zip -r9 ../../lambda.zip .
+          zip -r9 ../lambda.zip .
           cd ..
-          zip -g lambda.zip bot_handler.py  # oder dein Einstiegspunkt
+          zip -g lambda.zip bot_handler.py
+          ls -lh lambda.zip  # optional zum Debuggen
 
       - name: Upload to S3
         run: |
