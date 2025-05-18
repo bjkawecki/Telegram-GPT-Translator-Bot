@@ -71,6 +71,14 @@ resource "aws_lambda_function" "telegram_bot_handler" {
   role             = aws_iam_role.lambda_exec_role.arn
   depends_on       = [aws_iam_role_policy_attachment.lambda_policy_attach]
 }
+#* Permission getting invoked by API Gateway
+resource "aws_lambda_permission" "allow_apigw" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.telegram_bot_handler.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.webhook_api.execution_arn}/*/*"
+}
 
 #* API Gateway
 resource "aws_apigatewayv2_api" "webhook_api" {
@@ -115,4 +123,47 @@ resource "aws_ssm_parameter" "api_gateway_url" {
   name  = "/${var.bot_name}/api_gateway_url"
   type  = "String"
   value = aws_apigatewayv2_api.webhook_api.api_endpoint
+}
+
+#* LOG GROUP
+resource "aws_cloudwatch_log_group" "http_api_logs" {
+  name              = "/aws/http-api/${aws_apigatewayv2_api.webhook_api.id}/access-logs"
+  retention_in_days = 3
+}
+
+resource "aws_iam_role" "api_gw_logging_role" {
+  name = "APIGatewayCloudWatchLogsRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "apigateway.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_policy" "api_gw_logging_policy" {
+  name = "APIGatewayCloudWatchLogsPolicy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ]
+      Resource = "${aws_cloudwatch_log_group.http_api_logs.arn}:*"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_logging_policy" {
+  role       = aws_iam_role.api_gw_logging_role.name
+  policy_arn = aws_iam_policy.api_gw_logging_policy.arn
 }
