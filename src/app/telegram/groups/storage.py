@@ -3,7 +3,7 @@ from boto3.dynamodb.conditions import Key
 from app.config.aws_resources import media_group_table
 
 
-def store_media_group_item(media_group_id, message_id, post, ttl_seconds=1):
+def store_media_group_item(media_group_id, message_id, post, ttl_seconds=60):
     """Speichert ein MediaGroup-Element mit optionalem TTL (Default: 60s)."""
     print(f"==> Speichere in DynamoDB: {media_group_id=}, {message_id=}")
     expires_at = int(time.time()) + ttl_seconds
