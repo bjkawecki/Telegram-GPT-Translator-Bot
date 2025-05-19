@@ -1,4 +1,4 @@
-from src.config.constants import TARGET_CHAT_ID
+from src.app.config.constants import TARGET_CHAT_ID
 
 
 def process_media_group_payload(posts):

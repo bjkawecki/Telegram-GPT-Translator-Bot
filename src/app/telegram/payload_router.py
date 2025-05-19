@@ -1,4 +1,4 @@
-from src.telegram.payloads.single import (
+from src.app.telegram.payloads.single import (
     process_text_payload,
     process_photo_payload,
     process_video_payload,

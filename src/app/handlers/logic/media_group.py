@@ -2,13 +2,13 @@ import json
 
 import requests
 
-from src.telegram.groups.storage import (
+from src.app.telegram.groups.storage import (
     store_media_group_item,
     get_media_group,
     delete_media_group,
 )
-from src.telegram.groups.payload_builder import process_media_group_payload
-from src.telegram.api_methods import prepare_url
+from src.app.telegram.groups.payload_builder import process_media_group_payload
+from src.app.telegram.api_methods import prepare_url
 
 
 def handle_media_group(post, media_group_id, BOT_TOKEN):
