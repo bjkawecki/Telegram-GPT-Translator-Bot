@@ -1,7 +1,7 @@
 import time
 import argparse
 import json
-from src.handlers.telegram_event_handler import handler
+from src.handler import handler
 from src.telegram.test_data_loader import load_test_body
 
 if __name__ == "__main__":

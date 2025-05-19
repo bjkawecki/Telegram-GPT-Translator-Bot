@@ -1,6 +1,3 @@
-from src.config.env_config import BOT_TOKEN
-
-
 def select_send_method(post_type):
     send_method_config = {
         "text": "sendMessage",
@@ -11,5 +8,5 @@ def select_send_method(post_type):
     return send_method_config.get(post_type)
 
 
-def prepare_url(api_send_method):
+def prepare_url(api_send_method, BOT_TOKEN):
     return f"https://api.telegram.org/bot{BOT_TOKEN}/{api_send_method}"

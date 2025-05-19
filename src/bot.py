@@ -1,0 +1,38 @@
+import json
+import logging
+
+from src.config.aws_resources import get_webhook_token
+from src.config.constants import SSM_PARAM_BOT_TOKEN
+from src.config.logging_config import setup_logging
+from src.handlers.logic.media_group import handle_media_group
+from src.handlers.logic.single_message import handle_single_post
+from src.config.env_config import IS_PROD
+
+setup_logging()
+logger = logging.getLogger(__name__)
+
+
+def handler(event, context):
+    logger.info("Event received: %s", json.dumps(event))
+    BOT_TOKEN = get_webhook_token(SSM_PARAM_BOT_TOKEN)
+    if IS_PROD:
+        path_params = event.get("pathParameters") or {}
+        path_param_token = path_params.get("token")
+        if path_param_token != BOT_TOKEN:
+            logger.warning("Invalid token received: %s", path_param_token)
+            return {"statusCode": 403, "body": json.dumps({"message": "Forbidden"})}
+        try:
+            body = json.loads(event.get("body") or "{}")
+            logger.info("Telegram update: %s", json.dumps(body))
+        except json.JSONDecodeError as e:
+            logger.error("Failed to decode body: %s", e)
+            return {"statusCode": 400, "body": json.dumps({"message": "Invalid JSON"})}
+        post = body.get("channel_post", {})
+        media_group_id = post.get("media_group_id")
+    else:
+        post = event.get("channel_post", {})
+        media_group_id = post.get("media_group_id")
+    if media_group_id:
+        return handle_media_group(post, media_group_id, BOT_TOKEN)
+    else:
+        return handle_single_post(post, BOT_TOKEN)

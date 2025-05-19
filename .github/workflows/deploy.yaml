@@ -36,11 +36,8 @@ jobs:
 
       - name: Prepare Lambda ZIP
         run: |
-          mkdir -p lambda/package
-          pip install -r lambda/requirements.txt --target lambda/package
           cd lambda
-          zip -r9 ../lambda.zip package/
-          zip -g ../lambda.zip bot.py
+          zip -r9 ../lambda.zip bot.py
 
       - name: Upload to S3
         run: |

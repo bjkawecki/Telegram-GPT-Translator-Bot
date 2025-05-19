@@ -7,10 +7,10 @@ from src.telegram.message_classifier import find_post_type
 from src.telegram.payload_router import select_payload_method
 
 
-def handle_single_post(post):
+def handle_single_post(post, BOT_TOKEN):
     post_type = find_post_type(post)
     send_method = select_send_method(post_type)
-    url = prepare_url(send_method)
+    url = prepare_url(send_method, BOT_TOKEN)
     process_payload_method = select_payload_method(post_type)
     payload = process_payload_method(post)
     response = requests.post(url, json=payload or {})

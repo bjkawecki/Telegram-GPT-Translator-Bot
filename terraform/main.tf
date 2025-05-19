@@ -80,6 +80,13 @@ resource "aws_lambda_function" "telegram_bot_handler" {
   runtime          = "python3.11"
   role             = aws_iam_role.lambda_exec_role.arn
   depends_on       = [aws_iam_role_policy_attachment.lambda_policy_attach]
+
+
+  environment {
+    variables = {
+      APP_ENV = "prod"
+    }
+  }
 }
 #* Permission getting invoked by API Gateway
 resource "aws_lambda_permission" "allow_apigw" {

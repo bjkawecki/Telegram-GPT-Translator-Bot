@@ -1,6 +1,6 @@
+# src/config/env_config.py
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+ENV = os.environ.get("APP_ENV", "dev")
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+IS_PROD = ENV == "prod"
