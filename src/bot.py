@@ -3,10 +3,14 @@ import logging
 
 from app.config.aws_resources import get_webhook_token
 from app.config.constants import SSM_PARAM_BOT_TOKEN, ALLOWED_CHANNEL_ID
-from app.config.logging_config import setup_logging
 from app.handlers.logic.media_group import handle_media_group
 from app.handlers.logic.single_message import handle_single_post
 from app.config.env_config import IS_PROD
+
+
+def setup_logging():
+    logging.basicConfig(level=logging.INFO)
+
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -17,7 +21,7 @@ def is_from_bot(post):
 
 
 def handler(event, context):
-    logger.warning("Event received: %s", json.dumps(event))
+    logger.info("Event received: %s", json.dumps(event))
     BOT_TOKEN = get_webhook_token(SSM_PARAM_BOT_TOKEN)
     if IS_PROD:
         path_params = event.get("pathParameters") or {}
