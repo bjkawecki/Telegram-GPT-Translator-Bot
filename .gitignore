@@ -5,5 +5,5 @@ venv
 terraform.tfvars
 terraform.tfstate
 terraform.tfstate.backup
-res_*
-event.json
+json/
+__pycache__

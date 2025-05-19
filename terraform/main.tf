@@ -45,11 +45,21 @@ resource "aws_iam_policy" "lambda_policy" {
         Resource = "${aws_s3_bucket.lambda_code_bucket.arn}/*"
       },
       {
-        Effect = "Allow",
         Action = [
           "ssm:GetParameter"
         ],
+        Effect   = "Allow",
         Resource = "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/${var.bot_name}/webhook_token"
+      },
+      {
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:Query",
+          "dynamodb:DeleteItem"
+        ],
+        Effect   = "Allow",
+        Resource = aws_dynamodb_table.media_group_buffer.arn
       }
     ]
   })
@@ -166,4 +176,33 @@ resource "aws_iam_policy" "api_gw_logging_policy" {
 resource "aws_iam_role_policy_attachment" "attach_logging_policy" {
   role       = aws_iam_role.api_gw_logging_role.name
   policy_arn = aws_iam_policy.api_gw_logging_policy.arn
+}
+
+#* DynamoDB Table
+resource "aws_dynamodb_table" "media_group_buffer" {
+  name         = "MediaGroupBuffer"
+  billing_mode = "PAY_PER_REQUEST"
+
+  hash_key  = "media_group_id"
+  range_key = "message_id"
+
+  attribute {
+    name = "media_group_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "message_id"
+    type = "N"
+  }
+
+  ttl {
+    attribute_name = "expires_at"
+    enabled        = true
+  }
+
+  tags = {
+    Environment = "dev"
+    Project     = "TelegramBot"
+  }
 }
