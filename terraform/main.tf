@@ -56,7 +56,8 @@ resource "aws_iam_policy" "lambda_policy" {
           "dynamodb:GetItem",
           "dynamodb:PutItem",
           "dynamodb:Query",
-          "dynamodb:DeleteItem"
+          "dynamodb:DeleteItem",
+          "dynamodb:BatchWriteItem"
         ],
         Effect   = "Allow",
         Resource = aws_dynamodb_table.media_group_buffer.arn
