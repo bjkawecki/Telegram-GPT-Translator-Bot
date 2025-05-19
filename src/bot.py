@@ -44,6 +44,12 @@ def handler(event, context):
             logger.warning("Erlaubt: %s", ALLOWED_CHANNEL_ID)
             logger.warning("Nicht erlaubter Channel – wird ignoriert.")
             return {"statusCode": 403, "body": json.dumps({"message": "Forbidden"})}
+        if "text" not in post and "photo" not in post and "video" not in post:
+            logger.info(
+                "Ignoriere Systemnachricht oder nicht unterstützten Typ: %s",
+                post.keys(),
+            )
+            return {"statusCode": 200, "body": json.dumps({"message": "Ignored"})}
         media_group_id = post.get("media_group_id")
     else:
         post = event.get("channel_post", {})
