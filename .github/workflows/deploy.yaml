@@ -3,7 +3,7 @@ name: Deploy Lambda to S3 and Update Function
 on:
   push:
     paths:
-      - "lambda/**"
+      - "src/**"
     branches:
       - main
   workflow_dispatch:
