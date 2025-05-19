@@ -17,7 +17,7 @@ def is_from_bot(post):
 
 
 def handler(event, context):
-    logger.info("Event received: %s", json.dumps(event))
+    logger.warning("Event received: %s", json.dumps(event))
     BOT_TOKEN = get_webhook_token(SSM_PARAM_BOT_TOKEN)
     if IS_PROD:
         path_params = event.get("pathParameters") or {}
