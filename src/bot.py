@@ -1,12 +1,12 @@
 import json
 import logging
 
-from src.app.config.aws_resources import get_webhook_token
-from src.app.config.constants import SSM_PARAM_BOT_TOKEN, ALLOWED_CHANNEL_ID
-from src.app.config.logging_config import setup_logging
-from src.app.handlers.logic.media_group import handle_media_group
-from src.app.handlers.logic.single_message import handle_single_post
-from src.app.config.env_config import IS_PROD
+from app.config.aws_resources import get_webhook_token
+from app.config.constants import SSM_PARAM_BOT_TOKEN, ALLOWED_CHANNEL_ID
+from app.config.logging_config import setup_logging
+from app.handlers.logic.media_group import handle_media_group
+from app.handlers.logic.single_message import handle_single_post
+from app.config.env_config import IS_PROD
 
 setup_logging()
 logger = logging.getLogger(__name__)

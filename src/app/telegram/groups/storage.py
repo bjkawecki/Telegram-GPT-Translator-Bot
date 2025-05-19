@@ -1,6 +1,6 @@
 import time
 from boto3.dynamodb.conditions import Key
-from src.app.config.aws_resources import media_group_table
+from app.config.aws_resources import media_group_table
 
 
 def store_media_group_item(media_group_id, message_id, post, ttl_seconds=60):

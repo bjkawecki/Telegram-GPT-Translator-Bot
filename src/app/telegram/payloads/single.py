@@ -1,4 +1,4 @@
-from src.app.config.constants import TARGET_CHAT_ID
+from app.config.constants import TARGET_CHAT_ID
 
 
 def process_photo_payload(post):

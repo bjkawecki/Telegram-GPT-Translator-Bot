@@ -2,9 +2,9 @@ import json
 
 import requests
 
-from src.app.telegram.api_methods import prepare_url, select_send_method
-from src.app.telegram.message_classifier import find_post_type
-from src.app.telegram.payload_router import select_payload_method
+from app.telegram.api_methods import prepare_url, select_send_method
+from app.telegram.message_classifier import find_post_type
+from app.telegram.payload_router import select_payload_method
 
 
 def handle_single_post(post, BOT_TOKEN):

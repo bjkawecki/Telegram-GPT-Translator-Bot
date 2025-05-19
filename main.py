@@ -1,8 +1,8 @@
 import time
 import argparse
 import json
-from src.app.handler import handler
-from src.app.telegram.test_data_loader import load_test_body
+from handler import handler
+from telegram.test_data_loader import load_test_body
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Telegram Payload Tester")
