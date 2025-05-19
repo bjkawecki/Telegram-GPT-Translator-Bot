@@ -40,6 +40,8 @@ def handler(event, context):
             logger.warning("Nachricht vom Bot selbst – wird ignoriert.")
             return {"statusCode": 200, "body": json.dumps({"message": "Ignored"})}
         if post.get("chat", {}).get("id") != ALLOWED_CHANNEL_ID:
+            logger.warning(post.get("chat", {}).get("id"))
+            logger.warning("Erlaubt:", ALLOWED_CHANNEL_ID)
             logger.warning("Nicht erlaubter Channel – wird ignoriert.")
             return {"statusCode": 403, "body": json.dumps({"message": "Forbidden"})}
         media_group_id = post.get("media_group_id")
