@@ -2,7 +2,7 @@ import json
 import logging
 
 from src.config.aws_resources import get_webhook_token
-from src.config.constants import SSM_PARAM_BOT_TOKEN
+from src.config.constants import SSM_PARAM_BOT_TOKEN, ALLOWED_CHANNEL_ID
 from src.config.logging_config import setup_logging
 from src.handlers.logic.media_group import handle_media_group
 from src.handlers.logic.single_message import handle_single_post
@@ -10,6 +10,10 @@ from src.config.env_config import IS_PROD
 
 setup_logging()
 logger = logging.getLogger(__name__)
+
+
+def is_from_bot(post):
+    return post.get("from", {}).get("is_bot") is True
 
 
 def handler(event, context):
@@ -28,6 +32,12 @@ def handler(event, context):
             logger.error("Failed to decode body: %s", e)
             return {"statusCode": 400, "body": json.dumps({"message": "Invalid JSON"})}
         post = body.get("channel_post", {})
+        if is_from_bot(post):
+            logger.info("Nachricht vom Bot selbst – wird ignoriert.")
+            return {"statusCode": 200, "body": json.dumps({"message": "Ignored"})}
+        if post.get("chat", {}).get("id") != ALLOWED_CHANNEL_ID:
+            logger.info("Nicht erlaubter Channel – wird ignoriert.")
+            return {"statusCode": 403, "body": json.dumps({"message": "Forbidden"})}
         media_group_id = post.get("media_group_id")
     else:
         post = event.get("channel_post", {})
