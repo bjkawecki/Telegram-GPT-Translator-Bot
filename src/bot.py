@@ -31,7 +31,7 @@ def handler(event, context):
             return {"statusCode": 403, "body": json.dumps({"message": "Forbidden"})}
         try:
             body = json.loads(event.get("body") or "{}")
-            logger.info("Telegram update: %s", json.dumps(body))
+            logger.warning("Telegram update: %s", json.dumps(body))
         except json.JSONDecodeError as e:
             logger.error("Failed to decode body: %s", e)
             return {"statusCode": 400, "body": json.dumps({"message": "Invalid JSON"})}
