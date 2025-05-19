@@ -36,8 +36,8 @@ jobs:
 
       - name: Prepare Lambda ZIP
         run: |
-          cd lambda
-          zip -r9 ../lambda.zip bot.py
+          cd src
+          zip -r ../lambda.zip . -x "*/__pycache__/*" "*.pyc" "*.pyo"
 
       - name: Upload to S3
         run: |
