@@ -10,5 +10,8 @@ ENV = os.environ.get("APP_ENV", "dev")  # Fallback zu 'dev', wenn nicht gesetzt
 IS_PROD = ENV == "prod"
 IS_DEV = ENV == "dev"
 
-
 ALLOWED_CHANNEL_ID = -1002611172833
+
+SSM_OPENAI_KEY_PARAM = "/mirrowchan_bot/openai-key"
+
+DYNAMODB_TABLE_NAME = "MediaGroupBuffer"

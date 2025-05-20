@@ -1,5 +1,6 @@
 from app.config.constants import TARGET_CHAT_ID
 from app.telegram.formatting import make_clickable_forwarded_text
+from app.services.openai_client import translate_text
 
 
 def process_photo_payload(post, forwarded=False):
@@ -41,10 +42,10 @@ def process_video_payload(post, forwarded=False):
 
 
 def process_text_payload(post, forwarded=False):
+    text = translate_text(post.get("text", ""))
     payload = {
         "chat_id": TARGET_CHAT_ID,
-        "text": post.get("text", ""),
-        "entities": post.get("entities", []),
+        "text": text,
         "disable_web_page_preview": True,
     }
     if not forwarded:
@@ -52,7 +53,6 @@ def process_text_payload(post, forwarded=False):
 
     original_channel = post["chat"].get("title", "Quelle")
     original_channel = post.get("forward_origin", {}).get("chat", {}).get("title")
-    text = post.get("text", "")
     payload["parse_mode"] = "MarkdownV2"
     payload["text"] = make_clickable_forwarded_text(original_channel, text)
     return payload
