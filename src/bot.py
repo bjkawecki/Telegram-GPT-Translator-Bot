@@ -39,6 +39,11 @@ def handler(event, context):
         if is_from_bot(post):
             logger.warning("Nachricht vom Bot selbst – wird ignoriert.")
             return {"statusCode": 200, "body": json.dumps({"message": "Ignored"})}
+        if post.message_auto_delete_timer_changed:
+            logger.warning(
+                "Nachricht über Änderung des Auto-Delete-Timers – wird ignoriert."
+            )
+            return {"statusCode": 200, "body": json.dumps({"message": "Ignored"})}
         if post.get("chat", {}).get("id") != ALLOWED_CHANNEL_ID:
             logger.warning(post.get("chat", {}).get("id"))
             logger.warning("Erlaubt: %s", ALLOWED_CHANNEL_ID)

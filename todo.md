@@ -1,2 +1,2 @@
-1. develop and test bot_handler (locally)
+1. add chatgpt translate
 2. infrastructure diagram
