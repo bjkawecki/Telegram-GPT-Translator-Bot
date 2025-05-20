@@ -5,7 +5,6 @@ from app.config.aws_resources import get_webhook_token
 from app.config.constants import SSM_PARAM_BOT_TOKEN, ALLOWED_CHANNEL_ID
 from app.handlers.logic.media_group import handle_media_group
 from app.handlers.logic.single_message import handle_single_post
-from app.handlers.logic.forwarded import handle_forwarded
 from app.config.env_config import IS_PROD
 
 
