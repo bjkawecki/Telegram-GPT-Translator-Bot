@@ -42,7 +42,7 @@ def process_text_payload(post):
 def process_forwarded_payload(post):
     original_channel = post["chat"].get("title", "Quelle")
     text = post.get("text", "")
-    final_text = f"*🔁 Weitergeleitet von {escape_markdown(original_channel)}:*\n\n{escape_markdown(text)}"
+    final_text = f"*🔁 Weitergeleitet von @{escape_markdown(original_channel)}:*\n\n{escape_markdown(text)}"
     return {
         "chat_id": TARGET_CHAT_ID,
         "from_chat_id": post["chat"]["id"],
