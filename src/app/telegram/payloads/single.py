@@ -27,3 +27,11 @@ def process_text_payload(post):
         "text": post.get("text", ""),
         "entities": post.get("entities", []),
     }
+
+
+def process_forwarded_payload(post):
+    return {
+        "chat_id": TARGET_CHAT_ID,
+        "text": post.get("text", ""),
+        "entities": post.get("entities", []),
+    }
