@@ -1,14 +1,14 @@
-import openai
+from openai import OpenAI
 
 from app.config.aws_resources import openai_api_key
 
-openai.api_key = openai_api_key
+client = OpenAI(api_key=openai_api_key)
 
 
 def translate_text(text: str, target_lang: str = "Deutsch") -> str:
     prompt = f"Übersetze den folgenden Text nach {target_lang}:\n\n{text}"
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "Du bist ein professioneller Übersetzer."},
             {"role": "user", "content": prompt},
