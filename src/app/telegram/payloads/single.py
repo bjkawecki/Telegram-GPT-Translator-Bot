@@ -14,7 +14,6 @@ def process_photo_payload(post, forwarded=False):
     }
     if not forwarded:
         return payload
-    original_channel = post["chat"].get("title", "Quelle")
     original_channel = post.get("forward_origin", {}).get("chat", {}).get("title")
     caption = post.get("caption", "")
     payload["parse_mode"] = "MarkdownV2"
@@ -33,7 +32,6 @@ def process_video_payload(post, forwarded=False):
     }
     if not forwarded:
         return payload
-    original_channel = post["chat"].get("title", "Quelle")
     original_channel = post.get("forward_origin", {}).get("chat", {}).get("title")
     caption = post.get("caption", "")
     payload["parse_mode"] = "MarkdownV2"
@@ -41,8 +39,8 @@ def process_video_payload(post, forwarded=False):
     return payload
 
 
-def process_text_payload(post, forwarded=False):
-    text = translate_text(post.get("text", ""))
+async def process_text_payload(post, forwarded=False):
+    text = await translate_text(post.get("text", ""))
     payload = {
         "chat_id": TARGET_CHAT_ID,
         "text": text,
@@ -51,7 +49,6 @@ def process_text_payload(post, forwarded=False):
     if not forwarded:
         return payload
 
-    original_channel = post["chat"].get("title", "Quelle")
     original_channel = post.get("forward_origin", {}).get("chat", {}).get("title")
     payload["parse_mode"] = "MarkdownV2"
     payload["text"] = make_clickable_forwarded_text(original_channel, text)
