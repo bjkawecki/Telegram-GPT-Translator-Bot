@@ -16,24 +16,40 @@ def make_clickable_forwarded_text(original_channel: str, text: str) -> str:
 
 def process_photo_payload(post, forwarded=False):
     photo = max(post.get("photo", []), key=lambda p: p["file_size"])
-    return {
+    payload = {
         "chat_id": TARGET_CHAT_ID,
         "photo": photo["file_id"],
         "caption": post.get("caption", ""),
         "caption_entities": post.get("caption_entities", []),
         "disable_web_page_preview": True,
     }
+    if not forwarded:
+        return payload
+    original_channel = post["chat"].get("title", "Quelle")
+    original_channel = post.get("forward_origin", {}).get("chat", {}).get("title")
+    caption = post.get("caption", "")
+    payload["parse_mode"] = "MarkdownV2"
+    payload["caption"] = make_clickable_forwarded_text(original_channel, caption)
+    return payload
 
 
 def process_video_payload(post, forwarded=False):
     video = post.get("video", {})
-    return {
+    payload = {
         "chat_id": TARGET_CHAT_ID,
         "video": video.get("file_id", ""),
         "caption": post.get("caption", ""),
         "caption_entities": post.get("caption_entities", []),
         "disable_web_page_preview": True,
     }
+    if not forwarded:
+        return payload
+    original_channel = post["chat"].get("title", "Quelle")
+    original_channel = post.get("forward_origin", {}).get("chat", {}).get("title")
+    caption = post.get("caption", "")
+    payload["parse_mode"] = "MarkdownV2"
+    payload["caption"] = make_clickable_forwarded_text(original_channel, caption)
+    return payload
 
 
 def process_text_payload(post, forwarded=False):
@@ -52,16 +68,3 @@ def process_text_payload(post, forwarded=False):
     payload["parse_mode"] = "MarkdownV2"
     payload["text"] = make_clickable_forwarded_text(original_channel, text)
     return payload
-
-
-# def process_forwarded_payload(post):
-#     original_channel = post["chat"].get("title", "Quelle")
-#     original_channel = post.get("forward_origin", {}).get("chat", {}).get("title")
-#     text = post.get("text", "")
-#     return {
-#         "chat_id": TARGET_CHAT_ID,
-#         "from_chat_id": post["chat"]["id"],
-#         "text": make_clickable_forwarded_text(original_channel, text),
-#         "entities": post.get("entities", []),
-#         "disable_web_page_preview": True,
-#     }
