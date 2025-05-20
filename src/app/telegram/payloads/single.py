@@ -53,7 +53,7 @@ def process_forwarded_payload(post):
         "chat_id": TARGET_CHAT_ID,
         "from_chat_id": post["chat"]["id"],
         "text": make_clickable_forwarded_text(original_channel, text),
-        "entities": post.get("entities", []),
+        "entities": [],
         "parse_mode": "MarkdownV2",
         "disable_web_page_preview": True,
     }
