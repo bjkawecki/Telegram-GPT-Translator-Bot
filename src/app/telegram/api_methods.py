@@ -4,7 +4,7 @@ def select_send_method(post_type):
         "photo": "sendPhoto",
         "video": "sendVideo",
         "media_group": "sendMediaGroup",
-        "forwarded": "forwardMessage",
+        "forwarded": "copyMessage",
     }
     return send_method_config.get(post_type)
 

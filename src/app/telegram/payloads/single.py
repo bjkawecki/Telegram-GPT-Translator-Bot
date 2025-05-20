@@ -33,9 +33,12 @@ def process_text_payload(post):
 
 
 def process_forwarded_payload(post):
+    original_channel = post["chat"].get("title", "Quelle")
+    text = post.get("text", "")
+    final_text = f"🔁 Weitergeleitet von {original_channel}:\n\n{text}"
     return {
         "chat_id": TARGET_CHAT_ID,
         "from_chat_id": post["chat"]["id"],
-        "message_id": post["message_id"],
+        "text": final_text,
         "disable_web_page_preview": True,
     }
