@@ -1,5 +1,12 @@
 from app.config.constants import TARGET_CHAT_ID
 
+import re
+
+
+def escape_markdown(text: str) -> str:
+    escape_chars = r"_*\[\]()~`>#+-=|{}.!"
+    return re.sub(f"([{re.escape(escape_chars)}])", r"\\\1", text)
+
 
 def process_photo_payload(post):
     photo = max(post.get("photo", []), key=lambda p: p["file_size"])
@@ -35,10 +42,11 @@ def process_text_payload(post):
 def process_forwarded_payload(post):
     original_channel = post["chat"].get("title", "Quelle")
     text = post.get("text", "")
-    final_text = f"🔁 Weitergeleitet von {original_channel}:\n\n{text}"
+    final_text = f"*🔁 Weitergeleitet von {escape_markdown(original_channel)}:*\n\n{escape_markdown(text)}"
     return {
         "chat_id": TARGET_CHAT_ID,
         "from_chat_id": post["chat"]["id"],
         "text": final_text,
+        "parse_mode": "MarkdownV2",
         "disable_web_page_preview": True,
     }
