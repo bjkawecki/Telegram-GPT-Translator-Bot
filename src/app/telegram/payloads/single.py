@@ -40,7 +40,7 @@ def process_text_payload(post):
 
 
 def process_forwarded_payload(post):
-    original_channel = post["chat"].get("title", "Quelle")
+    original_channel = post["chat"].get("username", "Quelle")
     text = post.get("text", "")
     final_text = f"*🔁 Weitergeleitet von @{escape_markdown(original_channel)}:*\n\n{escape_markdown(text)}"
     return {
