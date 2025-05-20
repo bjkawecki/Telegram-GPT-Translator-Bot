@@ -18,5 +18,5 @@ def handle_forwarded(post, BOT_TOKEN):
     process_payload_method = select_payload_method(post_type)
     payload = process_payload_method(post)
     response = requests.post(url, json=payload or {})
-    logger.warning("Response: %s", response)
+    logger.warning("Response: %s", response.text)
     return {"statusCode": 200, "body": json.dumps({"message": "OK"})}
