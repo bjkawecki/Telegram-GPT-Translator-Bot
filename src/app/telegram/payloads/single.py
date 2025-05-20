@@ -44,6 +44,7 @@ def process_text_payload(post, forwarded=False):
     payload = {
         "chat_id": TARGET_CHAT_ID,
         "text": text,
+        "caption_entities": post.get("caption_entities", []),
         "disable_web_page_preview": True,
     }
     if not forwarded:
