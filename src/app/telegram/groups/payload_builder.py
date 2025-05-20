@@ -1,7 +1,8 @@
 from app.config.constants import TARGET_CHAT_ID
+from app.telegram.formatting import make_clickable_forwarded_text
 
 
-def process_media_group_payload(posts):
+def process_media_group_payload(posts, forwarded=False):
     """Erstellt das Payload für Telegrams sendMediaGroup-Methode."""
     if not posts:
         print("Leere MediaGroup – überspringe.")
@@ -41,6 +42,16 @@ def process_media_group_payload(posts):
 
         if i == 0 and p.get("caption"):
             media_item["caption"] = p["caption"]
+            if forwarded:
+                original_channel = p["chat"].get("title", "Quelle")
+                original_channel = (
+                    p.get("forward_origin", {}).get("chat", {}).get("title")
+                )
+                text = p.get("text", "")
+                media_item["parse_mode"] = "MarkdownV2"
+                media_item["caption"] = make_clickable_forwarded_text(
+                    original_channel, text
+                )
             if p.get("caption_entities"):
                 media_item["caption_entities"] = p["caption_entities"]
 

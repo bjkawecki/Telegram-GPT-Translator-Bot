@@ -21,7 +21,7 @@ def handle_media_group(post, media_group_id, BOT_TOKEN, forwarded=False):
         return {"statusCode": 200, "body": json.dumps({"message": "Waiting"})}
 
     posts = [item["post"] for item in items]
-    payload = process_media_group_payload(posts)
+    payload = process_media_group_payload(posts, forwarded)
     url = prepare_url("sendMediaGroup", BOT_TOKEN)
     response = requests.post(url, json=payload)
     print("Sent media group:", response.status_code)
