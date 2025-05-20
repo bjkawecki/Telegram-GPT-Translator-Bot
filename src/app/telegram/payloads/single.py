@@ -8,6 +8,7 @@ def process_photo_payload(post):
         "photo": photo["file_id"],
         "caption": post.get("caption", ""),
         "caption_entities": post.get("caption_entities", []),
+        "disable_web_page_preview": True,
     }
 
 
@@ -18,6 +19,7 @@ def process_video_payload(post):
         "video": video.get("file_id", ""),
         "caption": post.get("caption", ""),
         "caption_entities": post.get("caption_entities", []),
+        "disable_web_page_preview": True,
     }
 
 
@@ -26,12 +28,14 @@ def process_text_payload(post):
         "chat_id": TARGET_CHAT_ID,
         "text": post.get("text", ""),
         "entities": post.get("entities", []),
+        "disable_web_page_preview": True,
     }
 
 
 def process_forwarded_payload(post):
     return {
         "chat_id": TARGET_CHAT_ID,
-        "text": post.get("text", ""),
-        "entities": post.get("entities", []),
+        "from_chat_id": post["chat"]["id"],
+        "message_id": post["message_id"],
+        "disable_web_page_preview": True,
     }
