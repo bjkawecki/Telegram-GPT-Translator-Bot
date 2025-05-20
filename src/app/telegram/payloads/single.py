@@ -11,7 +11,7 @@ def escape_markdown(text: str) -> str:
 def make_clickable_forwarded_text(original_channel: str, text: str) -> str:
     escaped_text = escape_markdown(text)
     escaped_channel = escape_markdown(original_channel)
-    return f"*[🔁 Weitergeleitet von {escaped_channel}](https://t.me/{original_channel})*:\n\n{escaped_text}"
+    return f"*[🔁 Weitergeleitet aus {escaped_channel}](https://t.me/{original_channel})*\n\n{escaped_text}"
 
 
 def process_photo_payload(post):
@@ -47,6 +47,7 @@ def process_text_payload(post):
 
 def process_forwarded_payload(post):
     original_channel = post["chat"].get("title", "Quelle")
+    original_channel = post.get("forward_origin", {}).get("chat", {}).get("title")
     text = post.get("text", "")
     return {
         "chat_id": TARGET_CHAT_ID,
