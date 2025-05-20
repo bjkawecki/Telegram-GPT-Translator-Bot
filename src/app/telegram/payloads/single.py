@@ -14,7 +14,7 @@ def make_clickable_forwarded_text(original_channel: str, text: str) -> str:
     return f"*[🔁 Weitergeleitet aus {escaped_channel}](https://t.me/{original_channel})*\n\n{escaped_text}"
 
 
-def process_photo_payload(post):
+def process_photo_payload(post, forwarded=False):
     photo = max(post.get("photo", []), key=lambda p: p["file_size"])
     return {
         "chat_id": TARGET_CHAT_ID,
@@ -25,7 +25,7 @@ def process_photo_payload(post):
     }
 
 
-def process_video_payload(post):
+def process_video_payload(post, forwarded=False):
     video = post.get("video", {})
     return {
         "chat_id": TARGET_CHAT_ID,
@@ -36,24 +36,32 @@ def process_video_payload(post):
     }
 
 
-def process_text_payload(post):
-    return {
+def process_text_payload(post, forwarded=False):
+    payload = {
         "chat_id": TARGET_CHAT_ID,
         "text": post.get("text", ""),
         "entities": post.get("entities", []),
         "disable_web_page_preview": True,
     }
+    if not forwarded:
+        return payload
 
-
-def process_forwarded_payload(post):
     original_channel = post["chat"].get("title", "Quelle")
     original_channel = post.get("forward_origin", {}).get("chat", {}).get("title")
     text = post.get("text", "")
-    return {
-        "chat_id": TARGET_CHAT_ID,
-        "from_chat_id": post["chat"]["id"],
-        "text": make_clickable_forwarded_text(original_channel, text),
-        "entities": [],
-        "parse_mode": "MarkdownV2",
-        "disable_web_page_preview": True,
-    }
+    payload["parse_mode"] = "MarkdownV2"
+    payload["text"] = make_clickable_forwarded_text(original_channel, text)
+    return payload
+
+
+# def process_forwarded_payload(post):
+#     original_channel = post["chat"].get("title", "Quelle")
+#     original_channel = post.get("forward_origin", {}).get("chat", {}).get("title")
+#     text = post.get("text", "")
+#     return {
+#         "chat_id": TARGET_CHAT_ID,
+#         "from_chat_id": post["chat"]["id"],
+#         "text": make_clickable_forwarded_text(original_channel, text),
+#         "entities": post.get("entities", []),
+#         "disable_web_page_preview": True,
+#     }

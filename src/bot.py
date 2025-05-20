@@ -62,9 +62,9 @@ def handler(event, context):
         post = event.get("channel_post", {})
         media_group_id = post.get("media_group_id")
     if forwarded_message:
+        forwarded = True
         logger.warning("Forwarded message.")
-        return handle_forwarded(post, BOT_TOKEN)
-    elif media_group_id:
-        return handle_media_group(post, media_group_id, BOT_TOKEN)
+    if media_group_id:
+        return handle_media_group(post, media_group_id, BOT_TOKEN, forwarded)
     else:
-        return handle_single_post(post, BOT_TOKEN)
+        return handle_single_post(post, BOT_TOKEN, forwarded)

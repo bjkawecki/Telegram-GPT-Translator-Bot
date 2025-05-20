@@ -11,7 +11,7 @@ from app.telegram.groups.payload_builder import process_media_group_payload
 from app.telegram.api_methods import prepare_url
 
 
-def handle_media_group(post, media_group_id, BOT_TOKEN):
+def handle_media_group(post, media_group_id, BOT_TOKEN, forwarded=False):
     message_id = post["message_id"]
     store_media_group_item(media_group_id, message_id, post)
 
