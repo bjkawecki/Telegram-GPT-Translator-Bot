@@ -22,6 +22,7 @@ def is_from_bot(post):
 
 def handler(event, context):
     logger.info("Event received: %s", json.dumps(event))
+    return {"statusCode": 200, "body": json.dumps({"message": "drop queue"})}
     BOT_TOKEN = get_ssm_parameter(SSM_PARAM_BOT_TOKEN)
     if IS_PROD:
         path_params = event.get("pathParameters") or {}

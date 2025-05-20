@@ -81,7 +81,7 @@ resource "aws_lambda_function" "telegram_bot_handler" {
   runtime          = "python3.11"
   role             = aws_iam_role.lambda_exec_role.arn
   depends_on       = [aws_iam_role_policy_attachment.lambda_policy_attach]
-
+  timeout          = 10
 
   environment {
     variables = {
