@@ -13,9 +13,8 @@ Telegram bot that picks up messages from an input channel, translates them, and 
 
 1. **[How it works](#how-it-works)**
 2. **[Requirements](#requirements)**
-3. **[AWS Setup Overview](#aws-setup-overview)**
-4. **[Bot Function Overview](#bot-function-overview)**
-5. **[CI/CD Flow](#cicd-flow)**
+3. **[Bot Setup Overview](#bot-function-overview)**
+4. **[CI/CD Flow](#cicd-flow)**
 
 ## How it works
 
@@ -24,8 +23,8 @@ Telegram bot that picks up messages from an input channel, translates them, and 
 - OpenAI API key
 - Telegram Bot Token
 
-## AWS Setup Overview
-
 ## Bot Function Overview
+
+![bot-function.svg](assets/bot-function.svg)
 
 ## CI/CD Data Flow
