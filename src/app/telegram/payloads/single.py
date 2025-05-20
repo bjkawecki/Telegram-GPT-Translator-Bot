@@ -39,8 +39,8 @@ def process_video_payload(post, forwarded=False):
     return payload
 
 
-async def process_text_payload(post, forwarded=False):
-    text = await translate_text(post.get("text", ""))
+def process_text_payload(post, forwarded=False):
+    text = translate_text(post.get("text", ""))
     payload = {
         "chat_id": TARGET_CHAT_ID,
         "text": text,
