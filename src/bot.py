@@ -60,6 +60,7 @@ def handler(event, context):
     else:
         post = event.get("channel_post", {})
         media_group_id = post.get("media_group_id")
+    forwarded = False
     if forwarded_message:
         forwarded = True
         logger.warning("Forwarded message.")
