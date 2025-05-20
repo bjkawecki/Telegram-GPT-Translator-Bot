@@ -5,6 +5,7 @@ from app.config.aws_resources import get_webhook_token
 from app.config.constants import SSM_PARAM_BOT_TOKEN, ALLOWED_CHANNEL_ID
 from app.handlers.logic.media_group import handle_media_group
 from app.handlers.logic.single_message import handle_single_post
+from app.handlers.logic.forwarded import handle_forwarded
 from app.config.env_config import IS_PROD
 
 
@@ -56,10 +57,14 @@ def handler(event, context):
             )
             return {"statusCode": 200, "body": json.dumps({"message": "Ignored"})}
         media_group_id = post.get("media_group_id")
+        forwarded_message = post.get("forward_origin")
     else:
         post = event.get("channel_post", {})
         media_group_id = post.get("media_group_id")
-    if media_group_id:
+    if forwarded_message:
+        logger.warning("Forwarded message.")
+        return handle_forwarded(post, BOT_TOKEN)
+    elif media_group_id:
         return handle_media_group(post, media_group_id, BOT_TOKEN)
     else:
         return handle_single_post(post, BOT_TOKEN)

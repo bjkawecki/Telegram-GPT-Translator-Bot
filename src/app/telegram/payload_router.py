@@ -10,5 +10,6 @@ def select_payload_method(post_type):
         "text": process_text_payload,
         "photo": process_photo_payload,
         "video": process_video_payload,
+        "forwarded": process_text_payload,
     }
     return payload_method_config.get(post_type)
