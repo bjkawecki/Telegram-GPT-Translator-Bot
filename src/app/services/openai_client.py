@@ -17,4 +17,5 @@ def translate_text(text: str, target_lang: str = "Deutsch") -> str:
         ],
         temperature=0.3,
     )
+    logger.warning("OpenAI Antwort: %s", response)
     return response.choices[0].message.content
