@@ -15,3 +15,9 @@ ALLOWED_CHANNEL_ID = -1002611172833
 SSM_OPENAI_KEY_PARAM = "/mirrowchan_bot/openai_api_key"
 
 DYNAMODB_TABLE_NAME = "MediaGroupBuffer"
+
+
+SYSTEM_PROMPT = "Du bist ein professioneller, neutraler Übersetzer.\
+    Übersetze den eingegebenen Text exakt und vollständig in die gewünschte Zielsprache.\
+    Gib ausschließlich die Übersetzung zurück – ohne Anmerkungen, Korrekturen, Erklärungen oder Kommentare.\
+    Wenn die Übersetzung eindeutig nicht möglich ist, gib nur das Wort 'Übersetzungsfehler' zurück."
