@@ -9,24 +9,42 @@
 
 ![logo.png](assets/logo.png)
 
-Telegram bot that picks up messages from an input channel, translates them, and forwards them to an output channel. The bot uses OpenAI GPT to translate the messages and utilizes a Telegram webhook for communication.
+Telegram bot that picks up messages from an input channel, translates them, and forwards them to an output channel.
 
 ## Table of Contents
 
-1. **[How it works](#how-it-works)**
+1. **[How it Works](#how-it-works)**
 2. **[Requirements](#requirements)**
-3. **[Bot Setup Overview](#bot-function-overview)**
-4. **[CI/CD Flow](#cicd-flow)**
+3. **[Getting Started](#getting-started)**
+4. **[Architecture Illustration](#architecture-illustration)**
 
-## How it works
+## How it Works
+
+- The Telegram bot is subscribed to a source channel. When a new post is published, Telegram sends it via a webhook to an AWS Lambda function.
+
+- The Lambda function extracts the post's text and sends it to the OpenAI API to generate a translated version.
+
+- Once translated, the bot sends the translated post to a designated output channel.
 
 ## Requirements
 
 - OpenAI API key
 - Telegram Bot Token
+- AWS Account
 
-## Bot Function Overview
+## Getting Started
+
+1. Set up environment variables in `terraform.tfvars`.
+2. Deploy infrastructure with Terraform.
+3. Push code to trigger deployment.
+4. Test locally (optional) with `python main.py` and json test events.
+
+## Architecture Illustration
 
 ![bot-function.svg](assets/bot-function.svg)
 
-## CI/CD Data Flow
+## Note on the Use of DynamoDB
+
+The bot differentiates between single-media messages and media groups.
+This has to do with how Telegram treats posts with multiple media attachments as media groups, splitting them into multiple events.
+To aggregate these related events and reconstruct them into one message for reposting, DynamoDB is used as a temporary storage.
