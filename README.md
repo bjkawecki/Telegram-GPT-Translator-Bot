@@ -17,6 +17,7 @@ Telegram bot that picks up messages from an input channel, translates them, and 
 2. **[Requirements](#requirements)**
 3. **[Getting Started](#getting-started)**
 4. **[Architecture Illustration](#architecture-illustration)**
+5. **[Note on the Use of DynamoDB](#note-on-the-use-of-dynamodb)**
 
 ## How it Works
 
