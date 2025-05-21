@@ -22,9 +22,7 @@ Telegram bot that picks up messages from an input channel, translates them, and 
 ## How it Works
 
 - The Telegram bot is subscribed to a source channel. When a new post is published, Telegram sends it via a webhook to an AWS Lambda function.
-
 - The Lambda function extracts the post's text and sends it to the OpenAI API to generate a translated version.
-
 - Once translated, the bot sends the translated post to a designated output channel.
 
 ## Requirements
