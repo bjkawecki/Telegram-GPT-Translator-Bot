@@ -42,7 +42,7 @@ Telegram bot that picks up messages from an input channel, translates them, and 
 
 ## Architecture Illustration
 
-![bot-function.svg](assets/bot-function.svg)
+![architecture-overview.svg](assets/architecture-overview.svg)
 
 ## Note on the Use of DynamoDB
 
