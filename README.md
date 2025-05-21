@@ -7,6 +7,8 @@
 ![ChatGPT](https://img.shields.io/badge/OpenApi-74aa9c?style=flat-square&logo=openai&logoColor=white)
 ![Github-Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)
 
+![logo.png](assets/logo.png)
+
 Telegram bot that picks up messages from an input channel, translates them, and forwards them to an output channel. The bot uses OpenAI GPT to translate the messages and utilizes a Telegram webhook for communication.
 
 ## Table of Contents
