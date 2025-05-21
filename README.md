@@ -47,5 +47,5 @@ Telegram bot that picks up messages from an input channel, translates them, and 
 ## Note on the Use of DynamoDB
 
 The bot differentiates between single-media messages and media groups.
-This has to do with how Telegram treats posts with multiple media attachments as media groups, splitting them into multiple events.
-To aggregate these related events and reconstruct them into one message for reposting, DynamoDB is used as a temporary storage.
+This is because Telegram treats posts with multiple media attachments as media groups, splitting them into multiple events.
+To aggregate these related events and reconstruct them into a single message for reposting, DynamoDB is used as temporary storage.
